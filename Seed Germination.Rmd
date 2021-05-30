@@ -1,0 +1,28 @@
+---
+title: "Seed Germination"
+author: "Mario"
+date: '2021-04-25'
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(scales)
+library(mean_se)
+```
+
+```{r}
+germination <- read.csv("Germination Spreadsheet.csv") %>% mutate(germination.rate = number.germinated/number.planted)
+germination$factor_1 <- factor(germination$factor_1, levels = c("Low", "Medium", "High"))
+
+germinationLayia <- germination %>%
+  filter(julian.date == 114)
+```
+```{r}
+###Boxplot for Layia platyglossa
+ggplot(germinationLayia, aes(factor_1, germination.rate)) + geom_boxplot() +   theme_classic() + 
+  stat_summary(fun=mean, geom="point", shape=20, size=3, color="black", fill="black") +
+  labs(x = "Temperature Factor", y = "Percent Germinated")
+```
