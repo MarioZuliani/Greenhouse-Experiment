@@ -8,12 +8,13 @@ Purpose:
 The purpose of this experiment is to determine if cooler temperatures, as seen under shrub canopies, could be used as an indicator for the germination success of both native and exotic plant species in arid ecosystems. 
 
 Hypothesis:
-Temperature can directly predict the germination success of native and exotic species.
+We hypothesize that fine scale temperature may be able to mediate the germination of plant individuals.
 
 Predictions:
-1) Higher temperatures will result in a lower germination rate of native plant species.
-2) Invasive plant species will have a higher germination rate under all temperature treatments.
-3) Higher temperatures will have a negative effect on native and invasive species biomass.
+1) Fine scale temperature can be experimentally manipulated via heat lamps in an enclosed setting.
+2) Plants will respond to varying fine scale temperatures.
+3) The to temperature will be species specific.
+4) Responses to temperature will vary between native and exotic plant species.
 
 Data:
 All data can be access on KNB.
@@ -68,6 +69,17 @@ TempFactor <- ggplot(final, aes(Temp, number.germinated),show.legend=FALSE) +
   geom_smooth(method = lm, se = TRUE) + 
   labs(x = "Temperature", y = "Number of Germinated Seeds")
 TempFactor
+```
+```{r}
+###Plotting the lm
+plot(lm(number.germinated ~ mean_temp, data = final), which = 1)
+```
+```{r}
+germination_poly <- lm(number.germinated ~ mean_temp + I(mean_temp^2), data = final)
+
+library(car)
+library(broom)
+Anova(germination_poly)
 ```
 ```{r}
 ###General Figure showing Temp vs total germination (Not useable)
