@@ -112,16 +112,37 @@ TempspeciesFacet <- ggplot(final, aes(mean_temp, number.germinated),show.legend=
   labs(x = "Temperature", y = "Number of Germinated Seeds")
 TempspeciesFacet
 ```
+```{r}
+###Figure shows temperature v Germination, facet by species and filled via temperature
+TempspeciesFacetColor <- ggplot(final, aes(mean_temp, number.germinated, color = Temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species)+
+  scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+TempspeciesFacetColor
+```
+
 
 ```{r}
 ###Statistics For Germination of Each species at varying temperatures
 m1 <- glm(number.germinated ~ Temp*species+mean_temp, family = "quasipoisson", data = final)
 anova(m1, test = "Chisq")
+###Was temp manipulated significantly in the experiment?
 e1 <- emmeans(m1, pairwise~Temp)
 e1
-e2 <- emmeans(m1, pairwise~Temp:species) ###Low Temp brome germinates the same amount as Layia at all temps
+
+###Germination by temp and species
+e2 <- emmeans(m1, pairwise~Temp|species) ###Low Temp brome germinates the same amount as Layia at all temps
 e2
 ```
+```{r}
+###Difference in germination by species and temp
+e3 <- emmeans(m1, pairwise~species|Temp) ###Low Temp brome germinates the same amount as Layia at all temps
+e3
+```
+
+
 ```{r}
 ###Mass by Temperature 
 Mass <- ggplot(final, aes(mean_temp, Mass),show.legend=FALSE) +
@@ -151,12 +172,31 @@ MassSpeciesFacet <- ggplot(final, aes(mean_temp, Mass),show.legend=FALSE) +
   labs(x = "Temperature", y = "Number of Germinated Seeds")
 MassSpeciesFacet
 ```
+```{r}
+###Temperature v biomass, facet by species and fill by Temp
+MassSpeciesFacetColor <- ggplot(final, aes(mean_temp, Mass, color = Temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species)+
+  scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
+  theme(axis.title.x = element_blank()) +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Biomass (g)")
+MassSpeciesFacetColor
+```
+
 
 ```{r}
+###Biomass by temp and species
 m2 <- glm(Mass ~ number.germinated*Temp*species+mean_temp, family = "quasipoisson", data = final)
 anova(m2, test = "Chisq")
-e3 <- emmeans(m2, pairwise~Temp:species)
-e3
+e4 <- emmeans(m2, pairwise~Temp|species)
+e4
+
+```
+```{r}
+###Difference in biomass by species and temp
+e5 <- emmeans(m2, pairwise~species|Temp)
+e5
 
 ```
 
