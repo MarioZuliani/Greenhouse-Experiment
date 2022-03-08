@@ -52,6 +52,8 @@ Temp2 <- read.csv("Temp2.csv")
 #Prep Germination Data and Combine With Temp Data
 Germ <- read.csv("Final Germination.csv")
 final <- merge(Germ, Temp2, all = TRUE)
+
+write.csv(final, "final.csv")
 ```
 
 

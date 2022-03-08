@@ -1,4 +1,4 @@
-Factor,species,pendant.ID,mean_temp,max_temp
+Temp,species,pendant.ID,mean_temp,max_temp
 High,Bromus rubens,15573,28.66985928,31.6705
 High,Bromus rubens,15566,30.75365339,33.5206
 High,Bromus rubens,15574,31.98519574,34.1272

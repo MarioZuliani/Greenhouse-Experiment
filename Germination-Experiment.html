@@ -216,7 +216,9 @@ write.csv(Temp, &quot;Temp.csv&quot;)
 Temp2 &lt;- read.csv(&quot;Temp2.csv&quot;)</code></pre>
 <pre class="r"><code>#Prep Germination Data and Combine With Temp Data
 Germ &lt;- read.csv(&quot;Final Germination.csv&quot;)
-final &lt;- merge(Germ, Temp2, all = TRUE)</code></pre>
+final &lt;- merge(Germ, Temp2, all = TRUE)
+
+write.csv(final, &quot;final.csv&quot;)</code></pre>
 <p>###Data Viz</p>
 <pre class="r"><code>###Temperature vs Number of Germinated Individuals by species
 TempFactor &lt;- ggplot(final, aes(Temp, number.germinated),show.legend=FALSE) +
