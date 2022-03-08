@@ -5,14 +5,19 @@ date: "07/12/2021"
 output: html_document
 ---
 Purpose:
-The purpose of this experiment is to determine if cooler temperatures, as seen under shrub canopies, could be used as an indicator for the overall germination of both native and exotic plant species in arid ecosystems. This is important as native and exotic plant species can have very different indirect effects on vertebrate animals in deserts.
+The purpose of this experiment is to determine if cooler temperatures, as seen under shrub canopies, could be used as an indicator for the germination success of both native and exotic plant species in arid ecosystems. 
 
 Hypothesis:
-Temperature will act as a direct indicator for both native and exotic species germination, thus displaying each species’ overall success both under shrub and in open conditions.
+Temperature can directly predict the germination success of native and exotic species.
 
 Predictions:
-1)	Higher temperatures will result in a lower germination rate of native plant species.
-2)	Invasive plant species will have a higher germination rate under all temperature conditions in comparison to California Native plant species. 
+1) Higher temperatures will result in a lower germination rate of native plant species.
+2) Invasive plant species will have a higher germination rate under all temperature treatments.
+3) Higher temperatures will have a negative effect on native and invasive species biomass.
+
+Data:
+All data can be access on KNB.
+https://knb.ecoinformatics.org/view/doi:10.5063/F1GQ6W6R
 
 
 ```{r}
@@ -52,35 +57,48 @@ final <- merge(Germ, Temp2, all = TRUE)
 
 ###Data Viz
 ```{r}
-###Factor vs Number of Germinated Individuals by species
-TempFactor <- ggplot(final, aes(Factor, number.germinated),show.legend=FALSE) +
+###Temperature vs Number of Germinated Individuals by species
+TempFactor <- ggplot(final, aes(Temp, number.germinated),show.legend=FALSE) +
   geom_boxplot() +
   facet_wrap(~species)+
   scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
   theme(axis.title.x = element_blank()) +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Factor", y = "Number of Germinated Seeds")
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
 TempFactor
 ```
 ```{r}
+###General Figure showing Temp vs total germination (Not useable)
 Temp <- ggplot(final, aes(mean_temp, number.germinated),show.legend=FALSE) +
   geom_point() +
   scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
-  theme(axis.title.x = element_blank()) +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Factor", y = "Number of Germinated Seeds")
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
 Temp
 ```
 
 ```{r}
+###Figure showing Temp vs germination by species (Not facetted)
 Tempspecies <- ggplot(final, aes(mean_temp, number.germinated, color = species),show.legend=FALSE) +
   geom_point() +
   scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
-  theme(axis.title.x = element_blank()) +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Factor", y = "Number of Germinated Seeds")
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
 Tempspecies
 ```
+```{r}
+###This is Temperature vs germination, facet by species. I am not the biggest fan of this figure though
+TempspeciesFacet <- ggplot(final, aes(mean_temp, number.germinated, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~Temp)+
+  scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+TempspeciesFacet <- TempspeciesFacet + theme(legend.title = element_text(size = 3), 
+               legend.text = element_text(size = 3))
+TempspeciesFacet
+```
+
 
 ```{r}
 ###Plot for Temperature and germination by species
@@ -88,19 +106,18 @@ TempspeciesFacet <- ggplot(final, aes(mean_temp, number.germinated),show.legend=
   geom_point() +
   facet_wrap(~species)+
   scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
-  theme(axis.title.x = element_blank()) +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Factor", y = "Number of Germinated Seeds")
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
 TempspeciesFacet
 ```
 
 ```{r}
 ###Statistics For Germination of Each species at varying temperatures
-m1 <- glm(number.germinated ~ Factor*species+mean_temp, family = "quasipoisson", data = final)
+m1 <- glm(number.germinated ~ Temp*species+mean_temp, family = "quasipoisson", data = final)
 anova(m1, test = "Chisq")
-e1 <- emmeans(m1, pairwise~Factor)
+e1 <- emmeans(m1, pairwise~Temp)
 e1
-e2 <- emmeans(m1, pairwise~Factor:species) ###Low Temp brome germinates the same amount as Layia at all temps
+e2 <- emmeans(m1, pairwise~Temp:species) ###Low Temp brome germinates the same amount as Layia at all temps
 e2
 ```
 ```{r}
@@ -129,14 +146,14 @@ MassSpeciesFacet <- ggplot(final, aes(mean_temp, Mass),show.legend=FALSE) +
   scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
   theme(axis.title.x = element_blank()) +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Factor", y = "Number of Germinated Seeds")
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
 MassSpeciesFacet
 ```
 
 ```{r}
-m2 <- glm(Mass ~ number.germinated*Factor*species+mean_temp, family = "quasipoisson", data = final)
+m2 <- glm(Mass ~ number.germinated*Temp*species+mean_temp, family = "quasipoisson", data = final)
 anova(m2, test = "Chisq")
-e3 <- emmeans(m2, pairwise~Factor:species)
+e3 <- emmeans(m2, pairwise~Temp:species)
 e3
 
 ```
