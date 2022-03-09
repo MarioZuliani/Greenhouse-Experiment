@@ -1,4 +1,4 @@
-calendar_date,julian_date,pot_ID,species,census,pendant_ID,table_ID,lightbulb_strength,temp,number_planted,number_germinated_3week,soil_moisture_3week,number_germinated_6week,soil_moisture_6week,mass
+calendar_date,julian_date,pot_ID,species,census,pendant_ID,table_ID,lightbulb_strength,temp,number_planted,establishment,soil_moisture_3week,germination,soil_moisture_6week,mass
 06/09/2021,249,1,Bromus rubens,Greenhouse Temperature Experiment,15598,1,40,Low,40,17,22,17,15,0.064
 06/09/2021,249,2,Bromus rubens,Greenhouse Temperature Experiment,15598,1,40,Low,40,11,29,11,24,0.024
 06/09/2021,249,3,Bromus rubens,Greenhouse Temperature Experiment,15598,1,40,Low,40,13,40,15,15,0.01

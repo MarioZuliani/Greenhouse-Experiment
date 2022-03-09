@@ -8,7 +8,7 @@ Purpose:
 The purpose of this experiment is to determine if cooler temperatures, as seen under shrub canopies, could be used as an indicator for the germination success of both native and exotic plant species in arid ecosystems. 
 
 Hypothesis:
-We hypothesize that fine scale temperature may be able to mediate the germination of plant individuals.
+We hypothesize that variations in fine scale temperature can act as a direct proxy for successful desert plant establishment and germination.
 
 Predictions:
 1) Fine scale temperature can be experimentally manipulated via heat lamps in an enclosed setting.
@@ -51,13 +51,12 @@ Temp <- merge(Temp, Salvia, all = TRUE)
 Temp <- merge(Temp, Phacelia, all = TRUE)
 
 ###Set up SD and SE
-Temp$sd <- sd(Temp$temperature, na.rm = TRUE)
 se_temp <- sd(Temp$temperature)/sqrt(length(Temp$temperature))
 Temp$se <- se_temp
 
 ###Get mean and max temp
 Temp <- Temp %>%
-  group_by(as.character(temp), species, pendant_ID, se, sd) %>%
+  group_by(as.character(temp), species, pendant_ID, se) %>%
   summarise(mean_temp = mean(temperature), max_temp = max(temperature))
 names(Temp)[1] <- "temp"
 
@@ -84,7 +83,7 @@ write.csv(final, "final.csv")
 ###Data Viz
 ```{r}
 ###Temperature vs Number of Germinated Individuals in 6 weeks by species
-TempFactor <- ggplot(final, aes(temp, number_germinated_6week),show.legend=FALSE) +
+TempFactor <- ggplot(final, aes(temp, germination),show.legend=FALSE) +
   geom_boxplot() +
   facet_wrap(~species)+
   scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "A")+
@@ -95,10 +94,10 @@ TempFactor
 ```
 ```{r}
 ###Plotting the lm
-plot(lm(number_germinated_6week ~ mean_temp, data = final), which = 1)
+plot(lm(germination ~ mean_temp, data = final), which = 1)
 ```
 ```{r}
-germination_poly <- lm(number_germinated_6week ~ mean_temp + I(mean_temp^2), data = final)
+germination_poly <- lm(germination ~ mean_temp + I(mean_temp^2), data = final)
 
 library(car)
 library(broom)
@@ -106,7 +105,7 @@ Anova(germination_poly)
 ```
 ```{r}
 ###General Figure showing Temp vs total germination in 6 weeks (Not useable)
-Temp <- ggplot(final, aes(mean_temp, number_germinated_6week),show.legend=FALSE) +
+Temp <- ggplot(final, aes(mean_temp, germination),show.legend=FALSE) +
   geom_point() +
   scale_color_brewer(palette = "Set1") + theme_classic() + 
   geom_smooth(method = lm, se = TRUE) + 
@@ -116,7 +115,7 @@ Temp
 
 ```{r}
 ###Figure showing Temp vs germination by species (Not facetted)
-Tempspecies <- ggplot(final, aes(mean_temp, number_germinated_6week, color = species),show.legend=FALSE) +
+Tempspecies <- ggplot(final, aes(mean_temp, germination, color = species),show.legend=FALSE) +
   geom_point() +
   scale_color_brewer(palette = "Set1") + theme_classic() + 
   geom_smooth(method = lm, se = TRUE) + 
@@ -125,7 +124,7 @@ Tempspecies
 ```
 ```{r}
 ###This is Temperature vs germination, facet by species. I am not the biggest fan of this figure though
-TempspeciesFacet <- ggplot(final, aes(mean_temp, number_germinated_6week, color = species),show.legend=FALSE) +
+TempspeciesFacet <- ggplot(final, aes(mean_temp, germination, color = species),show.legend=FALSE) +
   geom_point() +
   facet_wrap(~temp)+
   scale_color_brewer(palette = "Set1") + theme_classic() + 
@@ -139,7 +138,7 @@ TempspeciesFacet
 
 ```{r}
 ###Plot for Temperature and germination in 6 weeks by species
-TempspeciesFacet <- ggplot(final, aes(mean_temp, number_germinated_6week),show.legend=FALSE) +
+TempspeciesFacet <- ggplot(final, aes(mean_temp, germination),show.legend=FALSE) +
   geom_point() +
   facet_wrap(~species)+
   scale_color_brewer(palette = "Set1") + theme_classic() + 
@@ -149,7 +148,7 @@ TempspeciesFacet
 ```
 ```{r}
 ###Figure shows temperature v Germination in 6 weeks, facet by species and filled via temperature
-TempspeciesFacetColor <- ggplot(final, aes(mean_temp, number_germinated_6week, color = temp),show.legend=FALSE) +
+TempspeciesFacetColor <- ggplot(final, aes(mean_temp, germination, color = temp),show.legend=FALSE) +
   geom_point() +
   facet_wrap(~species)+
   scale_color_brewer(palette = "Set1") + theme_classic() +
@@ -161,7 +160,7 @@ TempspeciesFacetColor
 
 ```{r}
 ###Statistics For Germination of Each species at varying temperatures
-m1 <- glm(number_germinated_6week ~ temp*species+mean_temp, family = "quasipoisson", data = final)
+m1 <- glm(germination ~ temp*species+mean_temp, family = "quasipoisson", data = final)
 anova(m1, test = "Chisq")
 ###Was temp manipulated significantly in the experiment?
 e1 <- emmeans(m1, pairwise~temp)
@@ -222,7 +221,7 @@ MassSpeciesFacetColor
 
 ```{r}
 ###Biomass by temp and species
-m2 <- glm(mass ~ number_germinated_6week*temp*species+mean_temp, family = "quasipoisson", data = final)
+m2 <- glm(mass ~ germination*temp*species+mean_temp, family = "quasipoisson", data = final)
 anova(m2, test = "Chisq")
 e4 <- emmeans(m2, pairwise~temp|species)
 e4

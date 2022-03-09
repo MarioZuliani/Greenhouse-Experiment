@@ -1,4 +1,4 @@
-"","species","pendant_ID","temp","calendar_date","julian_date","pot_ID","census","table_ID","lightbulb_strength","number_planted","number_germinated_3week","soil_moisture_3week","number_germinated_6week","soil_moisture_6week","mass","se","sd","mean_temp","max_temp"
+"","species","pendant_ID","temp","calendar_date","julian_date","pot_ID","census","table_ID","lightbulb_strength","number_planted","establishment","soil_moisture_3week","germination","soil_moisture_6week","mass","se","sd","mean_temp","max_temp"
 "1","Bromus rubens",15566,"High","06/09/2021",249,24,"Greenhouse Temperature Experiment",3,100,40,0,17,1,9,0,0.006772501,3.639984489,30.75365339,33.5206
 "2","Bromus rubens",15566,"High","06/09/2021",249,25,"Greenhouse Temperature Experiment",3,100,40,2,18,2,9,0.126,0.006772501,3.639984489,30.75365339,33.5206
 "3","Bromus rubens",15566,"High","06/09/2021",249,26,"Greenhouse Temperature Experiment",3,100,40,3,15,4,6,0.083,0.006772501,3.639984489,30.75365339,33.5206
