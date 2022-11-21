@@ -70,10 +70,11 @@ Temp2 <- read.csv("Temp_2.csv")
 
 ```{r}
 #Prep Germination Data and Combine With Temp Data
-Germ <- read.csv("Final Germination.csv")
-final <- merge(Germ, Temp2, all = TRUE)
+#Germ <- read.csv("Final Germination.csv")
+#final <- merge(Germ, Temp2, all = TRUE)
 
-write.csv(final, "final.csv")
+#write.csv(final, "final.csv")
+final <- read.csv("final.csv")
 ```
 
 
@@ -229,6 +230,37 @@ e5 <- emmeans(m2, pairwise~species|temp)
 e5
 
 ```
+
+```{r}
+#Natives Vs Invasives
+locality <- ggplot(final, aes(mean_temp, germination, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~locality) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+locality
+```
+```{r}
+locality2 <- ggplot(final, aes(mean_temp, germination),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~locality) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+locality2
+```
+```{r}
+#Natives vs Invasives Stats
+m3 <- glm(mass ~ germination*temp*locality, family = "quasipoisson", data = final)
+anova(m3, test = "Chisq")
+e6 <- emmeans(m3, pairwise~locality|temp)
+e6
+
+```
+
+
+
 
 ###Ideas from Previous version
 Purpose:
