@@ -258,7 +258,7 @@ locality3 <- ggplot(final, aes(mean_temp, mass, color = temp),show.legend=FALSE)
   facet_wrap(~locality) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Number of Germinated Seeds")
+  labs(x = "Temperature", y = "Bimass (g)")
 locality3
 ```
 ```{r}
@@ -267,18 +267,24 @@ locality4 <- ggplot(final, aes(mean_temp, mass),show.legend=FALSE) +
   facet_wrap(~locality) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Number of Germinated Seeds")
+  labs(x = "Temperature", y = "Biomass (g)")
 locality4
 ```
 
 
 ```{r}
-#Natives vs Invasives Stats
+#Natives vs Invasives Stats Mass
 m3 <- glm(mass ~ germination*temp*locality, family = "quasipoisson", data = final)
 anova(m3, test = "Chisq")
 e6 <- emmeans(m3, pairwise~locality|temp)
 e6
 
+```
+```{r}
+m4 <- glm(germination ~ temp*locality, family = "quasipoisson", data = final)
+anova(m4, test = "Chisq")
+e7 <- emmeans(m4, pairwise~locality|temp)
+e7
 ```
 
 
