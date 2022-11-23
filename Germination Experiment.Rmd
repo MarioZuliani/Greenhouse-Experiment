@@ -27,6 +27,7 @@ Key Words: Intraspecific Association, Desert, Grassland, Greenhouse, Temperature
 
 ```{r}
 ###Packages for future work
+library(rmarkdown)
 library(ggmap)
 library(ggplot2)
 library(tidyverse)
