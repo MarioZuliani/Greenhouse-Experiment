@@ -435,9 +435,82 @@ anova(model8, test = "Chisq")
 em8 <- emmeans(model8, pairwise~species|mean_temp)
 em8
 ```
+```{r}
+###Test everything with Maximum Temp
+#Max Temp by Average mass
+ggplot(final, aes(max_temp, average_mass, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Maximum Temperature", y = "Bimass per Individual")
+
+model9 <- glm(average_mass ~ max_temp*species, family = "quasipoisson", data = final)
+anova(model9, test = "Chisq")
+em9 <- emmeans(model9, pairwise~species|max_temp)
+em9
+
+###Succession of establishment (Established/germinated)
+ggplot(final, aes(max_temp, succession, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Maximum Temperature", y = "Percent Successfully Established")
+
+model10 <- glm(succession ~ max_temp*species, family = "quasipoisson", data = final)
+anova(model10, test = "Chisq")
+em10 <- emmeans(model10, pairwise~species|max_temp)
+em10
+
+###Overall Establishment
+ggplot(final, aes(max_temp, establishment, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Maximum Temperature", y = "Number Established Individuals")
+
+model11 <- glm(establishment ~ max_temp*species, family = "quasipoisson", data = final)
+anova(model11, test = "Chisq")
+em11 <- emmeans(model11, pairwise~species|max_temp)
+em11
+
+###Overall Germination
+
+ggplot(final, aes(max_temp, germination, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Maximum Temperature", y = "Number Germinated Individuals")
+
+model12 <- glm(germination ~ temp*species, family = "quasipoisson", data = final)
+anova(model12, test = "Chisq")
+em12 <- emmeans(model12, pairwise~temp|species)
+em12
+```
+```{r}
+###Test establish density by Biomass, Temp Block, and Species
+
+#Based on number of individuals that survived germination
+ggplot(final, aes(mean_temp, succession, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number Germinated Individuals")
+
+model13 <- glm(succession ~ mass*temp*species, family = "quasipoisson", data = final)
+anova(model13, test = "Chisq")
+em13 <- emmeans(model13, pairwise~temp|species)
+em13
+```
+```{r}
+###Test if it is non-linear relation
 
 
-
+```
 
 
 
