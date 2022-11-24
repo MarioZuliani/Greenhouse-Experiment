@@ -1,0 +1,477 @@
+---
+title: "Index"
+author: "Mario"
+date: "07/12/2021"
+output: html_document
+---
+"A controlled microclimate contrast of three native and one highly invasive plant species in Southern California"
+
+
+A controlled microclimate contrast of three native and one highly invasive plant species in Southern California
+Mario Zuliani1*, Laura Brussa, Jessica Cunsolo, Angela Zuliani, and Christopher J. Lortie1. 
+1Department of Biological Science, York University, 4700 Keele St, Toronto, ON M3J 1P3, Canada
+Question: How do increasing ambient temperature in arid ecosystems influence both the successive germination and total biomass of 3 natives and 1 exotic annual plant species. 
+
+Location: Greenhouse simulation conditions within the Carrizo Plain National Monument, California, USA (35.117985, -119.608762)
+
+Methods: The effects of temperature were tested on 3 native, Salvia columbariae, Layia platyglossa, Phacelia tanacetifolia and 1 exotic plant species, Bromus rubens independently over a 6-week growing period in a temperature controlled greenhouse in 2021. 210 individual replicates were conducted across an increasing temperature gradient meant to simulate the arid ecosystems of Southern California. Hourly temperature was recorded through ambient temperature pendants. Annual biomass was then recorded at the conclusion of each 6-week trial.
+
+Results: The evaluation of temperature on the overall successive germination of native and exotic annual plant species showed an overall negative affect. Increasing temperatures negatively influenced the total germination of one native – Layia platyglossa - and one exotic – Bromus rubens -  annual species. Regarding individual biomass, increases in ambient temperature negatively influenced both the overall size and biomass of 2 native – Layia platyglossa & Salvia columbaria – and one exotic – Bromus rubens - annual species.
+
+Conclusion: These findings suggest that increases in ambient temperature due to global warming can have negative impacts on both native and exotic plant establishment and succession. Analyzing the performance and establishment of these annual species is essential to understanding local plant community composition while determining the responses both native and exotic annuals have to increasing abiotic stressors within arid/semi-arid ecosystems. Specifically understanding how increasing ambient temperature influences exotic annual establishment can be vital knowledge for managing the spread and establishment of these species.
+
+Key Words: Intraspecific Association, Desert, Grassland, Greenhouse, Temperature, Bromus rubens, Exotic Species, Restoration
+
+
+
+
+```{r}
+###Packages for future work
+library(rmarkdown)
+library(ggmap)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(MASS)
+library(ggpubr) 
+library(emmeans)
+```
+```{r}
+##Prep Temp Data
+#Layia <- read.csv("All Temp Data.csv")
+#Brome <- read.csv("Brome Temp Sheet.csv")
+#Salvia <- read.csv("Salvia Temp Sheet.csv")
+#Phacelia <- read.csv("Phacelia Temp Sheet.csv")
+
+###Merge all species temp data
+#Temp <- merge(Layia, Brome, all = TRUE)
+#Temp <- merge(Temp, Salvia, all = TRUE)
+#Temp <- merge(Temp, Phacelia, all = TRUE)
+
+###Set up SD and SE
+#se_temp <- sd(Temp$temperature)/sqrt(length(Temp$temperature))
+#Temp$se <- se_temp
+
+###Get mean and max temp
+#Temp <- Temp %>%
+  #group_by(as.character(temp), species, pendant_ID, se) %>%
+  #summarise(mean_temp = mean(temperature), max_temp = max(temperature))
+#names(Temp)[1] <- "temp"
+
+###Output file
+#write.csv(Temp, "Temp.csv")
+
+```
+
+```{r}
+###Clean up Temperature and determine the mean and max for each pendant.
+#Temp2 <- read.csv("Temp_2.csv")
+```
+
+
+```{r}
+#Prep Germination Data and Combine With Temp Data
+#Germ <- read.csv("Final Germination.csv")
+#final <- merge(Germ, Temp2, all = TRUE)
+
+#write.csv(final, "final.csv")
+final <- read.csv("final.csv")
+```
+
+
+###Data Viz
+```{r}
+###Temperature vs Number of Germinated Individuals in 6 weeks by species
+TempFactor <- ggplot(final, aes(temp, germination),show.legend=FALSE) +
+  geom_boxplot() +
+  facet_wrap(~species)+
+  scale_color_brewer(palette = "Set1") + theme_classic() + labs(tag = "")+
+  theme(axis.title.x = element_blank()) +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+TempFactor
+```
+```{r}
+###Plotting the lm
+plot(lm(germination ~ mean_temp, data = final), which = 1)
+```
+```{r}
+germination_poly <- lm(germination ~ mean_temp + I(mean_temp^2), data = final)
+
+library(car)
+library(broom)
+Anova(germination_poly)
+```
+```{r}
+###General Figure showing Temp vs total germination in 6 weeks (Not useable)
+Temp <- ggplot(final, aes(mean_temp, germination),show.legend=FALSE) +
+  geom_point() +
+  scale_color_brewer(palette = "Set1") + theme_classic() + 
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+Temp
+```
+
+```{r}
+###Figure showing Temp vs germination by species (Not facetted)
+Tempspecies <- ggplot(final, aes(mean_temp, germination, color = species),show.legend=FALSE) +
+  geom_point() +
+  scale_color_brewer(palette = "Set1") + theme_classic() + 
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+Tempspecies
+```
+```{r}
+###This is Temperature vs germination, facet by species. I am not the biggest fan of this figure though
+TempspeciesFacet <- ggplot(final, aes(mean_temp, germination, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~temp)+
+  scale_color_brewer(palette = "Set1") + theme_classic() + 
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+TempspeciesFacet <- TempspeciesFacet + theme(legend.title = element_text(size = 3), 
+               legend.text = element_text(size = 3))
+TempspeciesFacet
+```
+ggplot(shelter.shrub.open, aes((day), temp, color=microsite)) + geom_smooth()+ xlab("Day") + ylab ("Temperature (°F)")+ theme_classic()+ theme(axis.text=element_text(size=12))+stat_summary(fun.y=max, geom="point", size=2, aes(shape = microsite))+ labs(color="Microsite", shape= "Microsite")
+
+
+```{r}
+###Plot for Temperature and germination in 6 weeks by species
+TempspeciesFacet <- ggplot(final, aes(mean_temp, germination),show.legend=FALSE) +
+  geom_smooth(method = lm) + 
+  scale_color_brewer(palette = "Set1") + theme_classic() + 
+    facet_wrap(~species)+
+  labs(x = "Mean Temperature (°C)", y = "Mean Number of Germinations") +stat_summary(fun.y=mean, geom="point", size=1.5)
+TempspeciesFacet
+```
+```{r}
+###Figure shows temperature v Germination in 6 weeks, facet by species and filled via temperature
+TempspeciesFacetColor <- ggplot(final, aes(mean_temp, germination, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species)+
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number of Germinated Seeds")
+TempspeciesFacetColor
+```
+
+
+```{r}
+###Statistics For Germination of Each species at varying temperatures
+m1 <- glm(germination ~ temp*species+mean_temp, family = "quasipoisson", data = final)
+anova(m1, test = "Chisq")
+###Was temp manipulated significantly in the experiment?
+e1 <- emmeans(m1, pairwise~temp)
+e1
+
+###Germination by temp and species
+e2 <- emmeans(m1, pairwise~temp|species) ###Low Temp brome germinates the same amount as Layia at all temps
+e2
+```
+```{r}
+###Difference in germination by species and temp
+e3 <- emmeans(m1, pairwise~species|temp) ###Low Temp brome germinates the same amount as Layia at all temps
+e3
+```
+
+
+```{r}
+###Mass by Temperature 
+Mass <- ggplot(final, aes(mean_temp, mass),show.legend=FALSE) +
+  geom_point() +
+  scale_color_brewer(palette = "Set1") + theme_classic() + 
+  theme() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Mean Temperature", y = "Mass")
+Mass
+```
+```{r}
+MassSpecies <- ggplot(final, aes(mean_temp, mass, color = species),show.legend=FALSE) +
+   geom_smooth(method = lm, se = TRUE) +
+  scale_color_brewer(palette = "Set1") + theme_classic() + 
+  stat_summary(fun.y=mean, geom="point", size=2)+
+  labs(x = "Mean Temperature (°C)", y = "Mean Mass (g)")
+MassSpecies
+```
+```{r}
+MassSpeciesFacet <- ggplot(final, aes(mean_temp, mass),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species)+
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  theme(axis.title.x = element_blank()) +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Mass (g)")
+MassSpeciesFacet
+```
+```{r}
+###Temperature v biomass, facet by species and fill by Temp
+MassSpeciesFacetColor <- ggplot(final, aes(mean_temp, mass, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species)+
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  theme(axis.title.x = element_blank()) +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Biomass (g)")
+MassSpeciesFacetColor
+```
+
+
+```{r}
+#Use guasian
+###Biomass by temp and species
+m2 <- glm(mass ~ germination*temp*species+mean_temp, family = "quasipoisson", data = final)
+anova(m2, test = "Chisq")
+e4 <- emmeans(m2, pairwise~temp|species)
+e4
+
+```
+```{r}
+###Difference in biomass by species and temp
+e5 <- emmeans(m2, pairwise~species|temp)
+e5
+
+```
+
+```{r}
+#Natives Vs Invasives Germination
+#Not useful
+#locality <- ggplot(final, aes(mean_temp, germination, color = temp),show.legend=FALSE) +
+ # geom_point() +
+  #facet_wrap(~locality) +
+  #scale_color_brewer(palette = "Set1") + theme_classic() +
+  #geom_smooth(method = lm, se = TRUE) + 
+  #labs(x = "Temperature", y = "Number of Germinated Seeds")
+#locality
+```
+```{r}
+#Not useful
+#locality2 <- ggplot(final, aes(mean_temp, germination),show.legend=FALSE) +
+ # geom_point() +
+  #facet_wrap(~locality) +
+  #scale_color_brewer(palette = "Set1") + theme_classic() +
+  #geom_smooth(method = lm, se = TRUE) + 
+  #labs(x = "Temperature", y = "Number of Germinated Seeds")
+#locality2
+```
+
+```{r}
+#Native vs Invasive Biomass
+###Do not use
+#locality3 <- ggplot(final, aes(mean_temp, mass, color = temp),show.legend=FALSE) +
+  #geom_point() +
+ # facet_wrap(~locality) +
+ # scale_color_brewer(palette = "Set1") + theme_classic() +
+ # geom_smooth(method = lm, se = TRUE) + 
+ # labs(x = "Temperature", y = "Bimass (g)")
+#locality3
+```
+```{r}
+###Do not use
+#locality4 <- ggplot(final, aes(mean_temp, mass),show.legend=FALSE) +
+ # geom_point() +
+  #facet_wrap(~locality) +
+  #scale_color_brewer(palette = "Set1") + theme_classic() +
+  #geom_smooth(method = lm, se = TRUE) + 
+  #labs(x = "Temperature", y = "Biomass (g)")
+#locality4
+```
+
+
+```{r}
+#Natives vs Invasives Stats Mass
+#Not useful
+#m3 <- glm(mass ~ germination*temp*locality, family = "quasipoisson", data = final)
+#anova(m3, test = "Chisq")
+#e6 <- emmeans(m3, pairwise~locality|temp)
+#e6
+
+```
+```{r}
+#m4 <- glm(germination ~ temp*locality, family = "quasipoisson", data = final)
+#anova(m4, test = "Chisq")
+#e7 <- emmeans(m4, pairwise~locality|temp)
+#e7
+```
+
+###November 24th 2022 (After meeting)
+```{r}
+###Boxplots Comparing Mean and Max Temp Blocks
+ggplot(final, aes(x=factor (temp, level=c("Low", "Medium", "High")), mean_temp)) +
+  geom_boxplot() + theme_classic() + labs(x = "Temperature Treatment", y = "Mean Temperature")
+
+ggplot(final, aes(x=factor (temp, level=c("Low", "Medium", "High")), max_temp)) +
+  geom_boxplot() + theme_classic() + labs(x = "Temperature Treatment", y = "Max Temperature")
+```
+```{r}
+###Test Biomass by Established Density with Mean and Max Temp
+
+###Set up Biomass by Established Density
+final$average_mass <- final$mass/final$establishment
+
+###By mean Temp
+ggplot(final, aes(mean_temp, average_mass),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Bimass per Individual")
+
+###Dont like this one
+ggplot(final, aes(mean_temp, average_mass, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Bimass per Individual")
+
+###Max Temp
+ggplot(final, aes(max_temp, average_mass),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Bimass per Individual")
+
+ggplot(final, aes(max_temp, average_mass, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Bimass per Individual")
+
+###Ran as Gaussian since temp is blocked
+m5 <- glm(average_mass ~ temp*species, family = "gaussian", data = final)
+anova(m5, test = "Chisq")
+e8 <- emmeans(m5, pairwise~temp|species)
+e8
+
+m6 <- glm(average_mass ~ mean_temp*species+pendant_ID, family = "quasipoisson", data = final)
+anova(m6, test = "Chisq")
+e9 <- emmeans(m6, pairwise~species|mean_temp)
+e9
+```
+```{r}
+###Set up percent successful establishment of individuals
+final$succession <- final$establishment/final$germination
+```
+
+```{r}
+###Treat Temp as Block
+###Average Mass
+ggplot(final, aes(mean_temp, average_mass, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Bimass per Individual")
+
+model1 <- glm(average_mass ~ temp*species, family = "quasipoisson", data = final)
+anova(model1, test = "Chisq")
+em1 <- emmeans(model1, pairwise~temp|species)
+em1
+
+###Succession of establishment (Established/germinated)
+ggplot(final, aes(mean_temp, succession, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Percent Successfully Established")
+
+model2 <- glm(succession ~ temp*species, family = "quasipoisson", data = final)
+anova(model2, test = "Chisq")
+em2 <- emmeans(model2, pairwise~temp|species)
+em2
+
+###Overall Establishment
+ggplot(final, aes(mean_temp, establishment, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number Established Individuals")
+
+model3 <- glm(establishment ~ temp*species, family = "quasipoisson", data = final)
+anova(model3, test = "Chisq")
+em3 <- emmeans(model3, pairwise~temp|species)
+em3
+
+###Overall Germination
+
+ggplot(final, aes(mean_temp, germination, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Temperature", y = "Number Germinated Individuals")
+
+model4 <- glm(germination ~ temp*species, family = "quasipoisson", data = final)
+anova(model4, test = "Chisq")
+em4 <- emmeans(model4, pairwise~temp|species)
+em4
+```
+```{r}
+###Treating temp as continuous
+
+#average mass by mean_temp
+model5 <- glm(average_mass ~ mean_temp*species + pendant_ID, family = "gaussian", data = final)
+anova(model5, test = "Chisq")
+em5 <- emmeans(model5, pairwise~species|mean_temp)
+em5
+
+model6 <- glm(succession ~ mean_temp*species + pendant_ID, family = "gaussian", data = final)
+anova(model6, test = "Chisq")
+em6 <- emmeans(model6, pairwise~species|mean_temp)
+em6
+
+model7 <- glm(establishment~ mean_temp*species + pendant_ID, family = "gaussian", data = final)
+anova(model7, test = "Chisq")
+em7 <- emmeans(model7, pairwise~species|mean_temp)
+em7
+
+model8 <- glm(germination ~ mean_temp*species + pendant_ID, family = "gaussian", data = final)
+anova(model8, test = "Chisq")
+em8 <- emmeans(model8, pairwise~species|mean_temp)
+em8
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###Ideas from Previous version
+Purpose:
+The purpose of this experiment is to determine if cooler temperatures, as seen under shrub canopies, could be used as an indicator for the germination success of both native and exotic plant species in arid ecosystems. 
+
+Hypothesis:
+We hypothesize that variations in fine scale temperature can act as a direct proxy for successful desert plant establishment and germination.
+
+Predictions:
+1) Fine scale temperature can be experimentally manipulated via heat lamps in an enclosed setting.
+2) Plants will respond to varying fine scale temperatures.
+3) The response to temperature will be species specific.
+4) Responses to temperature will vary between native and exotic plant species.
+
+Data:
+All data can be access on KNB.
+https://knb.ecoinformatics.org/view/doi:10.5063/F1GQ6W6R
+
+Rough Ideas:
+1)To connect this to shrub density I want to show that the cooler temperatures, as experienced under shrubs, can provide a benefit for species germination. The law table is meant to simulate these lower temperatures while the medium and high tables are meant to act as open areas at a moderate temperature and at extreme temperature.
+2)There should be a visible difference between overall germination and mass between native and invasive species. If we can determine if invasives can germinate better under shrubs than in open areas then we can connect this to competition between natives and invasive.
+3)Species should vary in their response to fine scale temperature since the range that they germinate vary from species to species. We should see that some natives germinate better at specific temperature while others do not.
+4) We can connect this possibly to climate change. If we find that higher temperatures means a lower germination success then that can be the take-home message, that increasing temperatures have negative effects on desert plant species.
+
