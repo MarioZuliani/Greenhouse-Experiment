@@ -318,12 +318,12 @@ ggplot(final, aes(mean_temp, average_mass),show.legend=FALSE) +
   labs(x = "Temperature", y = "Bimass per Individual")
 
 ###Dont like this one
-ggplot(final, aes(mean_temp, average_mass, color = temp),show.legend=FALSE) +
-  geom_point() +
-  facet_wrap(~species) +
-  scale_color_brewer(palette = "Set1") + theme_classic() +
-  geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Bimass per Individual")
+#ggplot(final, aes(mean_temp, average_mass, color = temp),show.legend=FALSE) +
+ # geom_point() +
+  #facet_wrap(~species) +
+  #scale_color_brewer(palette = "Set1") + theme_classic() +
+  #geom_smooth(method = lm, se = TRUE) + 
+  #labs(x = "Temperature", y = "Bimass per Individual")
 
 ###Max Temp
 ggplot(final, aes(max_temp, average_mass),show.legend=FALSE) +
