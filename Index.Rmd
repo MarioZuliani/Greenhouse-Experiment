@@ -506,17 +506,6 @@ anova(model13, test = "Chisq")
 em13 <- emmeans(model13, pairwise~temp|species)
 em13
 ```
-```{r}
-###Test if it is non-linear relation
-
-
-```
-
-
-
-
-
-
 
 
 
