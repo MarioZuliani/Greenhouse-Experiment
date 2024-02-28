@@ -4,6 +4,14 @@ author: "Mario"
 date: "07/12/2021"
 output: html_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message = FALSE)
+```
+# All proposed figures and Stats are at THE BOTTOM of the html
+
+
+
 "A controlled microclimate contrast of three native and one highly invasive plant species in Southern California"
 
 
@@ -21,9 +29,6 @@ Results: The evaluation of temperature on the overall successive germination of 
 Conclusion: These findings suggest that increases in ambient temperature due to global warming can have negative impacts on both native and exotic plant establishment and succession. Analyzing the performance and establishment of these annual species is essential to understanding local plant community composition while determining the responses both native and exotic annuals have to increasing abiotic stressors within arid/semi-arid ecosystems. Specifically understanding how increasing ambient temperature influences exotic annual establishment can be vital knowledge for managing the spread and establishment of these species.
 
 Key Words: Intraspecific Association, Desert, Grassland, Greenhouse, Temperature, Bromus rubens, Exotic Species, Restoration
-
-
-
 
 ```{r}
 ###Packages for future work
@@ -350,6 +355,11 @@ m6 <- glm(average_mass ~ mean_temp*species+pendant_ID, family = "quasipoisson", 
 anova(m6, test = "Chisq")
 e9 <- emmeans(m6, pairwise~species|mean_temp)
 e9
+
+a <- glm(average_mass ~ max_temp*species+pendant_ID, family = "quasipoisson", data = final)
+anova(a, test = "Chisq")
+e09 <- emmeans(a, pairwise~species|max_temp)
+e09
 ```
 ```{r}
 ###Set up percent successful establishment of individuals
@@ -357,14 +367,14 @@ final$succession <- final$establishment/final$germination
 ```
 
 ```{r}
-###Treat Temp as Block
-###Average Mass
+### Treat Temp as Block
+### Average Mass
 ggplot(final, aes(mean_temp, average_mass, color = temp),show.legend=FALSE) +
   geom_point() +
   facet_wrap(~species) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Bimass per Individual")
+  labs(x = "Mean Temperature", y = "Bimass per Individual")
 
 model1 <- glm(average_mass ~ temp*species, family = "quasipoisson", data = final)
 anova(model1, test = "Chisq")
@@ -377,7 +387,7 @@ ggplot(final, aes(mean_temp, succession, color = temp),show.legend=FALSE) +
   facet_wrap(~species) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Percent Successfully Established")
+  labs(x = "Mean Temperature", y = "Percent Successfully Established")
 
 model2 <- glm(succession ~ temp*species, family = "quasipoisson", data = final)
 anova(model2, test = "Chisq")
@@ -390,7 +400,7 @@ ggplot(final, aes(mean_temp, establishment, color = temp),show.legend=FALSE) +
   facet_wrap(~species) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Number Established Individuals")
+  labs(x = "Mean Temperature", y = "Individual Establishment")
 
 model3 <- glm(establishment ~ temp*species, family = "quasipoisson", data = final)
 anova(model3, test = "Chisq")
@@ -404,7 +414,7 @@ ggplot(final, aes(mean_temp, germination, color = temp),show.legend=FALSE) +
   facet_wrap(~species) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Number Germinated Individuals")
+  labs(x = "Mean Temperature", y = "Individual Germination")
 
 model4 <- glm(germination ~ temp*species, family = "quasipoisson", data = final)
 anova(model4, test = "Chisq")
@@ -436,12 +446,12 @@ em8 <- emmeans(model8, pairwise~species|mean_temp)
 em8
 ```
 ```{r}
-###Test everything with Maximum Temp
-#Max Temp by Average mass
-ggplot(final, aes(max_temp, average_mass, color = temp),show.legend=FALSE) +
+### Test everything with Maximum Temp
+# Max Temp by Average mass
+ggplot(final, aes(max_temp, average_mass),show.legend=FALSE) +
   geom_point() +
   facet_wrap(~species) +
-  scale_color_brewer(palette = "Set1") + theme_classic() +
+  scale_color_brewer(palette = "Set1") + theme_classic() + ylim (0,0.5)+
   geom_smooth(method = lm, se = TRUE) + 
   labs(x = "Maximum Temperature", y = "Bimass per Individual")
 
@@ -451,12 +461,12 @@ em9 <- emmeans(model9, pairwise~species|max_temp)
 em9
 
 ###Succession of establishment (Established/germinated)
-ggplot(final, aes(max_temp, succession, color = temp),show.legend=FALSE) +
-  geom_point() +
-  facet_wrap(~species) +
-  scale_color_brewer(palette = "Set1") + theme_classic() +
-  geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Maximum Temperature", y = "Percent Successfully Established")
+#ggplot(final, aes(max_temp, succession, color = temp),show.legend=FALSE) +
+#  geom_point() +
+ # facet_wrap(~species) +
+ # scale_color_brewer(palette = "Set1") + theme_classic() +
+  #geom_smooth(method = lm, se = TRUE) + 
+  #labs(x = "Maximum Temperature", y = "Percent Successfully Established")
 
 model10 <- glm(succession ~ max_temp*species, family = "quasipoisson", data = final)
 anova(model10, test = "Chisq")
@@ -464,7 +474,7 @@ em10 <- emmeans(model10, pairwise~species|max_temp)
 em10
 
 ###Overall Establishment
-ggplot(final, aes(max_temp, establishment, color = temp),show.legend=FALSE) +
+ggplot(final, aes(max_temp, establishment),show.legend=FALSE) +
   geom_point() +
   facet_wrap(~species) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
@@ -483,7 +493,7 @@ ggplot(final, aes(max_temp, germination, color = temp),show.legend=FALSE) +
   facet_wrap(~species) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Maximum Temperature", y = "Number Germinated Individuals")
+  labs(x = "Maximum Temperature", y = "Germination per pot")
 
 model12 <- glm(germination ~ temp*species, family = "quasipoisson", data = final)
 anova(model12, test = "Chisq")
@@ -499,7 +509,7 @@ ggplot(final, aes(mean_temp, succession, color = temp),show.legend=FALSE) +
   facet_wrap(~species) +
   scale_color_brewer(palette = "Set1") + theme_classic() +
   geom_smooth(method = lm, se = TRUE) + 
-  labs(x = "Temperature", y = "Number Germinated Individuals")
+  labs(x = "Temperature", y = "Successive Individuals")
 
 model13 <- glm(succession ~ mass*temp*species, family = "quasipoisson", data = final)
 anova(model13, test = "Chisq")
@@ -507,10 +517,47 @@ em13 <- emmeans(model13, pairwise~temp|species)
 em13
 ```
 
+```{r}
+### Stats for mass
+m20 <- glm(mass ~ species*temp+mean_temp+max_temp, family = "quasipoisson", data = final)
+anova(m20, test = "Chisq")
+e20 <- emmeans(m20, pairwise~temp|species)
+e20
+
+m21 <- glm(germination ~ temp*establishment*mass*species, family = "quasipoisson", data = final)
+anova(m21, test = "Chisq")
+e21 <- emmeans(m1, pairwise~temp|species)
+e21
+
+# Testing Mass, establishment, and germination with temp as a block/category by species (Need pendant ID)
+
+m61 <- glm(mass ~ temp*species+pendant_ID, family = "quasipoisson", data = final)
+anova(m61, test = "Chisq")
+e91 <- emmeans(m61, pairwise~species|temp)
+e91
+
+m62 <- glm(establishment ~ temp*species+pendant_ID, family = "quasipoisson", data = final)
+anova(m62, test = "Chisq")
+e92 <- emmeans(m62, pairwise~species|temp)
+e92
+
+m63 <- glm(germination ~ temp*species+pendant_ID, family = "quasipoisson", data = final)
+anova(m63, test = "Chisq")
+e93 <- emmeans(m63, pairwise~species|temp)
+e93
+```
 
 
 
+### Temperature Ranges per species from publications:
+Salvia ranges from 10C to 25C (Cabrerra-Santos et al. 2022, Dashti et al. 2015)
+Bromus ranges 
+Layia ranges
+Phacelia ranges
 
+
+###GBIF citation
+GBIF.org (31 January 2023) GBIF Occurrence Download  https://doi.org/10.15468/dl.vtkfem
 
 
 
@@ -536,4 +583,880 @@ Rough Ideas:
 2)There should be a visible difference between overall germination and mass between native and invasive species. If we can determine if invasives can germinate better under shrubs than in open areas then we can connect this to competition between natives and invasive.
 3)Species should vary in their response to fine scale temperature since the range that they germinate vary from species to species. We should see that some natives germinate better at specific temperature while others do not.
 4) We can connect this possibly to climate change. If we find that higher temperatures means a lower germination success then that can be the take-home message, that increasing temperatures have negative effects on desert plant species.
+
+
+
+```{r}
+### Test if table temp significant
+Layia <- read.csv("All Temp Data.csv")
+Brome <- read.csv("Brome Temp Sheet.csv")
+Salvia <- read.csv("Salvia Temp Sheet.csv")
+Phacelia <- read.csv("Phacelia Temp Sheet.csv")
+
+### Merge all species temp data
+Temp <- merge(Layia, Brome, all = TRUE)
+Temp <- merge(Temp, Salvia, all = TRUE)
+Temp <- merge(Temp, Phacelia, all = TRUE)
+
+
+final_temp <- Temp %>%
+  group_by(temp, species) %>%
+  summarise(mean_table_temp = mean(temperature))
+
+final2 <- merge(final, final_temp, all = TRUE) %>%
+  na.omit()
+
+
+```
+
+```{r}
+### Test to see if raw temp significant
+library(glmmTMB)
+temp <- glmmTMB(temperature ~ temp*species, data = Temp, family = "gaussian") ### Use Temp df b/c it has all raw temperature data
+summary(temp)
+temp_reduced <- glmmTMB(temperature ~ temp, data = Temp, family = "gaussian")
+summary(temp_reduced)
+lrt_result <- anova(temp, temp_reduced, test = "Chisq")
+summary(lrt_result)
+chisq <- lrt_result$Chisq[2]
+chisq
+
+
+```
+```{r}
+###Dont use
+Mass_plot <- ggplot(final2, aes(as.character(mean_table_temp), average_mass, color = temp)) +
+  geom_boxplot(width = 5, length = 10) +
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  facet_wrap(~species) + stat_summary(fun.y=mean, geom="point", shape=23, size=4) +
+  scale_color_brewer(palette = "Set1") + theme_classic() + ylim(0,0.4)
+Mass_plot
+```
+
+
+
+
+
+### Proposed Boxplot figures and stats
+```{r}
+### Average Mass by mean temp
+Mass_plot <- ggplot(final2, aes(mean_table_temp, average_mass, color = temp)) +
+  geom_boxplot(width = 5) +
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  facet_wrap(~species) + stat_summary(fun.y=mean, geom="point", shape=23, size=4,position = position_dodge(width = 5)) +
+  scale_color_brewer(palette = "Set1") + theme_classic() + ylim(0,0.4)
+Mass_plot
+
+
+Germination_plot <- ggplot(final2, aes(mean_table_temp, germination, color = temp)) +
+  geom_boxplot(width = 5) +
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  facet_wrap(~species) + stat_summary(fun.y=mean, geom="point", shape=23, size=4) +
+  scale_color_brewer(palette = "Set1") + theme_classic() 
+Germination_plot
+ 
+
+Establishment_plot <- ggplot(final2, aes(mean_table_temp, establishment, color = temp)) +
+  geom_boxplot(width = 5) +
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  facet_wrap(~species) + stat_summary(fun.y=mean, geom="point", shape=23, size=4) +
+  scale_color_brewer(palette = "Set1") + theme_classic() 
+Establishment_plot
+```
+
+```{r}
+Mass_plot_Bromus <- ggplot(subset(final2, species == "Bromus rubens"), aes(mean_table_temp, average_mass, color = temp)) +
+  geom_boxplot(width = 0.8) +  # set the width parameter to adjust the size of the boxplot
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  scale_color_brewer(palette = "Set1") + 
+  facet_wrap(~species) +
+  theme_classic() + 
+  ylim(0,0.4) +
+  stat_summary(fun.y=mean, geom="point", shape=23, size=4, position=position_dodge(width=1.2))  # add means as points with larger width
+
+Mass_plot_Bromus
+
+Mass_plot_Layia <- ggplot(subset(final2, species == "Layia platyglossa"), aes(mean_table_temp, average_mass, color = temp)) +
+  geom_boxplot(width = 0.8) +  # set the width parameter to adjust the size of the boxplot
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  scale_color_brewer(palette = "Set1") + 
+  facet_wrap(~species) +
+  theme_classic() + 
+  ylim(0,0.4) +
+  stat_summary(fun.y=mean, geom="point", shape=23, size=4, position=position_dodge(width=1.2))  # add means as points with larger width
+
+Mass_plot_Layia
+
+
+Mass_plot_Salvia <- ggplot(subset(final2, species == "Salvia columbariae"), aes(mean_table_temp, average_mass, color = temp)) +
+  geom_boxplot(width = 0.8) +  # set the width parameter to adjust the size of the boxplot
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  facet_wrap(~species) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_classic() + 
+  ylim(0,0.4) +
+  stat_summary(fun.y=mean, geom="point", shape=23, size=4, position=position_dodge(width=1.2))  # add means as points with larger width
+
+Mass_plot_Salvia
+
+Mass_plot_Phacelia <- ggplot(subset(final2, species == "Phacelia tanacetifolia"), aes(mean_table_temp, average_mass, color = temp)) +
+  geom_boxplot(width = 0.8) +  # set the width parameter to adjust the size of the boxplot
+  scale_fill_discrete(breaks=c("High", "Medium", "Low")) +
+  scale_color_brewer(palette = "Set1") + 
+  theme_classic() + 
+  facet_wrap(~species) +
+  ylim(0,0.4) +
+  stat_summary(fun.y=mean, geom="point", shape=23, size=4, position=position_dodge(width=1.2))  # add means as points with larger width
+
+Mass_plot_Phacelia
+
+library(patchwork)
+#(ggarrange(Mass_plot_Bromus, Mass_plot_Layia, Mass_plot_Salvia, Mass_plot_Phacelia, ncol = 2, nrow = 2, common.legend = TRUE, legend = "right", align = "hv") + plot_layout(guides = "collect") + 
+#  align_plots(align = "h")) / 
+ # xlab("Mean Temperature") + 
+  #plot_layout(heights = c(1, 1, 1, 0.2)) 
+
+
+```
+
+
+
+```{r}
+### Boxplot models
+# Mass
+model1 <- glm(mass ~ mean_table_temp*species+temp, family = "quasipoisson", data = final2)
+broom::tidy(anova(model1, test = "Chisq"))
+estimate1 <- emmeans(model1, pairwise~species|temp)
+estimate1      # Broom::tidy() does not work on emmeans
+
+# Establishment
+model2 <- glm(establishment ~ mean_table_temp*species+temp, family = "quasipoisson", data = final2)
+broom::tidy(anova(model2, test = "Chisq"))
+estimate2 <- emmeans(model2, pairwise~species|mean_table_temp)
+estimate2    # Broom::tidy() does not work on emmeans
+
+# Germination
+model3 <- glm(germination ~ mean_table_temp*species+temp, family = "quasipoisson", data = final2)
+broom::tidy(anova(model3, test = "Chisq"))
+estimate3 <- emmeans(model3, pairwise~species|temp)
+estimate3    # Broom::tidy() does not work on emmeans
+```
+
+
+
+#### Proposed figures and stats
+```{r}
+### Treat Temp as Block
+
+# Testing Mass, establishment, and germination with temp as a block/category by species (Need pendant ID)
+
+m61 <- glm(mass ~ temp*species+pendant_ID, family = "quasipoisson", data = final)
+broom::tidy(anova(m61, test = "Chisq"))
+e91 <- emmeans(m61, pairwise~species|temp)
+e91      # Broom::tidy() does not work on emmeans
+
+m62 <- glm(establishment ~ temp*species+pendant_ID, family = "quasipoisson", data = final)
+broom::tidy(anova(m62, test = "Chisq"))
+e92 <- emmeans(m62, pairwise~species|temp)
+e92
+
+m63 <- glm(germination ~ temp*species+pendant_ID, family = "quasipoisson", data = final)
+broom::tidy(anova(m63, test = "Chisq"))
+e93 <- emmeans(m63, pairwise~species|temp)
+e93
+
+
+
+### Average Mass by mean temp
+figure_1 <-ggplot(final, aes(mean_temp, average_mass, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Mean Temperature", y = "Bimass per pot (g)")
+figure_1
+
+# Stats for figue 4
+model1 <- glm(average_mass ~ mean_temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model1, test = "Chisq"))
+em1 <- emmeans(model1, pairwise~species|mean_temp)
+em1
+
+### Overall Establishment by mean temp
+figure_2 <- ggplot(final, aes(mean_temp, establishment, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Mean Temperature", y = "Establishment per pot")
+figure_2
+
+# Stats for figure 3
+model3 <- glm(establishment ~ mean_temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model3, test = "Chisq"))
+em3 <- emmeans(model3, pairwise~species|mean_temp)
+em3
+
+### Overall Germination by mean temp
+figure_3 <- ggplot(final, aes(mean_temp, germination, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Mean Temperature", y = "Germination per pot")
+figure_3
+
+# Stats for figure 2
+model4 <- glm(germination ~ mean_temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model4, test = "Chisq"))
+em4 <- emmeans(model4, pairwise~species|mean_temp)
+em4
+
+
+### Max Temp by Average mass by max temp
+ggplot(final, aes(max_temp, average_mass, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Maximum Temperature", y = "Bimass per pot (g)")
+
+model9 <- glm(average_mass ~ max_temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model9, test = "Chisq"))
+em9 <- emmeans(model9, pairwise~species|max_temp)
+em9
+
+### Overall Establishment by max temp
+ggplot(final, aes(max_temp, establishment, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Maximum Temperature", y = "Establishment per pot")
+
+model11 <- glm(establishment ~ max_temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model11, test = "Chisq"))
+em11 <- emmeans(model11, pairwise~species|max_temp)
+em11
+
+## #Overall Germination by max temp
+
+ggplot(final, aes(max_temp, germination, color = temp),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species) +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = lm, se = TRUE) + 
+  labs(x = "Maximum Temperature", y = "Germination per pot")
+
+model12 <- glm(germination ~ temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model12, test = "Chisq"))
+em12 <- emmeans(model12, pairwise~temp|species)
+em12
+
+```
+
+```{r}
+
+model4 <- glm(germination ~ temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model4, test = "Chisq"))
+em4 <- emmeans(model4, pairwise~species|temp)
+em4
+
+### Use to show that brome does worse at higher temperatures than all species except Salvia where it does better. April 18 2023
+model4 <- glm(germination ~ mean_temp*species + temp, family = "quasipoisson", data = final)
+broom::tidy(anova(model4, test = "Chisq"))
+em4 <- emmeans(model4, pairwise~species|mean_temp)
+em4
+```
+```{r}
+# Stats for figure 3 April 18 2023
+model3 <- glm(establishment ~ temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model3, test = "Chisq"))
+em3 <- emmeans(model3, pairwise~temp|species)
+em3
+```
+```{r}
+model1 <- glm(average_mass ~ temp*species, family = "quasipoisson", data = final)
+broom::tidy(anova(model1, test = "Chisq"))
+em1 <- emmeans(model1, pairwise~temp|species)
+em1
+```
+### Final Figures for Publication
+```{r}
+# Figure 2 in publication
+figure_3 <- ggplot(final, aes(mean_temp, germination),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE, color = "black") + 
+  labs(x = "Mean Temperature (°C)", y = "Germination per pot") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10)) + theme(aspect.ratio = 0.7)
+figure_3
+
+# Stats for figure 2
+model4 <- glm(germination ~ mean_temp*species + photon, data = final)
+model4
+summary(model4)
+anova(model4, test = "Chisq")
+em4 <- emmeans(model4, pairwise~species|mean_temp)
+em4
+
+# Try non-linear model
+poly4 <- glm(germination ~  poly(mean_temp,2, raw = TRUE)*species + photon, data = final)
+poly4
+summary(poly4)
+anova(poly4, test = "Chisq")
+emm4 <- emmeans(poly4, pairwise~species|mean_temp)
+emm4
+
+```
+```{r}
+### Overall Establishment by mean temp
+figure_2 <- ggplot(final, aes(mean_temp, establishment),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE, color = "black") + 
+  labs(x = "Mean Temperature (°C)", y = "Establishment per pot") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10)) + theme(aspect.ratio = 0.7)
+figure_2
+
+# Stats for figure 3
+model3 <- glm(establishment ~ mean_temp*species + photon, data = final)
+model3
+broom::tidy(anova(model3, test = "Chisq"))
+em3 <- emmeans(model3, pairwise~species|mean_temp)
+em3
+
+poly3 <- glm(establishment ~  poly(mean_temp,2, raw = TRUE)*species + photon, data = final)
+poly3
+summary(poly3)$r.squared
+anova(poly3, test = "Chisq")
+emm3 <- emmeans(poly3, pairwise~species|mean_temp)
+emm3
+```
+```{r}
+###Overall Biomass
+figure_1 <-ggplot(final, aes(mean_temp, average_mass),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() + ylim(0, 0.4) +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE, color = "black") + 
+  labs(x = "Mean Temperature (°C)", y = "Biomass per pot (g)") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10)) + theme(aspect.ratio = 0.7)
+figure_1
+
+# Stats for figue 4
+model1 <- glm(average_mass ~ mean_temp*species + photon, data = final)
+model1
+broom::tidy(anova(model1, test = "Chisq"))
+em1 <- emmeans(model1, pairwise~species|mean_temp)
+em1
+
+poly1 <- glm(average_mass ~  poly(mean_temp,2, raw = TRUE)*species + photon, data = final)
+poly1
+summary(poly1)
+anova(poly1, test = "Chisq")
+emm1 <- emmeans(poly1, pairwise~species|mean_temp)
+emm1
+```
+
+```{r}
+### Light Data
+library(agricolae)
+Light <- read.csv("Light.csv")
+anova_result <- aov(light ~ Watt, data = Light)
+summary(anova_result)
+posthoc_result <- HSD.test(anova_result, "Watt")
+print(posthoc_result)
+```
+```{r}
+light_summary <- Light %>%
+  group_by(pendant_ID) %>%
+  summarize(Avg_Light = mean(light, na.rm = TRUE))
+merged_data <- final %>%
+  left_join(light_summary, by = "pendant_ID")
+
+correlation <- cor(merged_data$Avg_Light, merged_data$mean_temp)
+
+cor_test <- cor.test(merged_data$Avg_Light, merged_data$mean_temp)
+print(cor_test)
+```
+### Map of GBIF data
+```{r}
+# Set your Google Maps API key
+api_key <- "AIzaSyBWSInlcZQ9hnFVEdCcZqD94IgOl95QhIs"
+register_google(key = api_key)
+
+# Specify the bounding box for the map with names
+bounding_box <- c(left = -119.4, bottom = 34, right = -119, top = 36)
+
+my_map <- get_map(location = bounding_box, maptype = "terrain", source = "google", zoom = 7)
+map <- read.csv("observations_joined.csv")
+
+map_1 <- ggmap(my_map) +
+  geom_point(data = map, aes(x = lon, y = lat, color = species),size = 2,  shape = 16, alpha = 0.6) +
+  scale_size(guide = "none") + # Remove legend for size
+  scale_color_brewer(palette = "Set1")+
+  labs(x = "longitude", y = "latitude", color = "Species") + theme(legend.position = "right")
+map_1
+
+observations <- ggplot(map, aes(x = bio10, fill = species)) +
+  geom_histogram(position = "stack", color = "black", bins = 30) +
+  scale_fill_brewer(palette = "Set1") +
+  labs(x = "Mean Annual Temperature (°C)", y = "Observations", fill = "Species") + theme_classic() + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10)) + theme(aspect.ratio = 0.7)
+observations
+```
+
+```{r}
+#install.packages("AICcmodavg")
+library(AICcmodavg)
+models_germ <- list(model4, poly4)
+model.names_germ <- c('model4', 'poly4')
+aictab(cand.set = models_germ, modnames = model.names_germ)
+
+
+models_establish <- list(model3, poly3)
+model.names_establish <- c('model3', 'poly3')
+aictab(cand.set = models_establish, modnames = model.names_establish)
+
+models_mass <- list(model1, poly1)
+model.names_mass <- c('model1', 'poly1')
+aictab(cand.set = models_mass, modnames = model.names_mass)
+```
+
+```{r}
+# 
+unique_species <- unique(final$species)
+print(unique_species)
+
+# Subset data for each species and inspect
+for (species_name in unique_species) {
+  print(species_name)
+  print(final %>% filter(species == species_name))
+}
+
+
+r_squared_values <- list()
+
+for (species_name in unique_species) {
+  subset_data <- final %>% filter(species == species_name)
+  
+  # Fit linear model
+  lm_model <- lm(establishment ~ poly(mean_temp, 2, raw = TRUE), data = subset_data)
+  
+  # Calculate R-squared value
+  r_squared <- summary(lm_model)$r.squared
+  
+  # Store R-squared value
+  r_squared_values[[species_name]] <- r_squared
+}
+
+# Print R-squared values for each species
+print(r_squared_values)
+
+```
+```{r}
+### Percent Germination
+final$percent_germinated <- (final$germination / final$number_planted)
+final$percent_established <- (final$establishment / final$number_planted)
+final$average_biomass <- (final$mass / final$establishment)
+
+temp_range <- range(final$mean_temp)
+
+# Round the minimum and maximum temperatures to the nearest integer
+min_temp <- floor(temp_range[1])
+max_temp <- ceiling(temp_range[2])
+
+
+#% Germinated
+figure_3 <- ggplot(final, aes(mean_temp, percent_germinated, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE) + 
+  labs(x = "Mean Temperature (°C)", y = "Proportion Germinated", color = "Species") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10), legend.position = "none") + theme(aspect.ratio = 0.7) + xlim(22,34) + scale_x_continuous(breaks = seq(22, 34, by = 2)) + expand_limits(x = c(22, 34))  # Set integer breaks on x-axis
+figure_3
+
+#% Established
+
+figure_2 <- ggplot(final, aes(mean_temp, percent_established, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE) + 
+  labs(x = "Mean Temperature (°C)", y = "Proportion Established", color = "Species") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10), legend.position = "none") + theme(aspect.ratio = 0.7) + xlim(22,34) + scale_x_continuous(breaks = seq(22, 34, by = 2)) + expand_limits(x = c(22, 34)) # Set integer breaks on x-axis
+figure_2
+
+### Average Biomass
+figure_1 <- ggplot(final, aes(mean_temp, average_biomass, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE) + 
+  labs(x = "Mean Temperature (°C)", y = "Per Capita Biomass (g)", color = "Species") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10), legend.position = "none") + theme(aspect.ratio = 0.7) + xlim(22,34) + scale_x_continuous(breaks = seq(22, 34, by = 2)) + expand_limits(x = c(22, 34)) # Set integer breaks on x-axis
+figure_1
+
+p1 <- glm(average_biomass ~  poly(mean_temp,2, raw = TRUE)*species + photon, data = final)
+p1
+summary(p1)
+anova(p1, test = "Chisq")
+em1 <- emmeans(p1, pairwise~species|mean_temp)
+em1
+
+p2 <- glm(percent_established ~  poly(mean_temp,2, raw = TRUE)*species + photon, family = "quasibinomial", data = final)
+p2
+summary(p2)
+anova(p2, test = "Chisq")
+em2 <- emmeans(p2, pairwise~species|mean_temp)
+em2
+
+p3 <- glm(percent_germinated ~  poly(mean_temp,2, raw = TRUE)*species + photon, family = "quasibinomial", data = final)
+p3
+summary(p3)
+anova(p3, test = "Chisq")
+em3 <- emmeans(p3, pairwise~species|mean_temp)
+em3
+```
+
+```{r}
+r_squared_values <- list()
+se_values <- list()
+
+for (species_name in unique_species) {
+  subset_data <- final %>% filter(species == species_name)
+  
+  # Fit linear model
+  lm_model <- lm(establishment ~ poly(mean_temp, 2, raw = TRUE), data = subset_data)
+  
+  # Calculate R-squared value
+  r_squared <- summary(lm_model)$r.squared
+  
+  # Store R-squared value
+  r_squared_values[[species_name]] <- r_squared
+  
+  # Calculate sample size
+  n <- length(subset_data$establishment)
+  
+  # Calculate standard error of R-squared
+  se_r_squared <- sqrt((1 - r_squared) / (n - 2))
+  
+  # Store standard error of R-squared
+  se_values[[species_name]] <- se_r_squared
+}
+
+# Print R-squared values and standard errors for each species
+print(r_squared_values)
+print(se_values)
+
+
+# Convert R-squared values and standard errors to a data frame
+rsq_se_df <- data.frame(
+  species = names(r_squared_values),
+  r_squared = unlist(r_squared_values),
+  se = unlist(se_values)
+)
+
+# Plot R-squared values with error bars
+R_squared <- ggplot(rsq_se_df, aes(x = species, y = r_squared, color = species)) +
+  geom_point(position = position_dodge(width = 0.8), size = 3) +
+  geom_errorbar(aes(ymin = r_squared - se, ymax = r_squared + se),  position = position_dodge(width = 0.8), width = 0.2) +
+  labs(x = "Species", y = "R-squared") + theme_minimal() + theme_classic() + coord_flip() +
+  theme(axis.text.x = element_text(hjust = 1)) + theme(aspect.ratio = 1) + scale_color_brewer(palette = "Set1") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10)) + theme(legend.position = "none")
+R_squared
+
+R_squared <- ggplot(rsq_se_df, aes(x = reorder(species, r_squared), y = r_squared, color = species)) +
+  geom_point(position = position_dodge(width = 0.8), size = 3) +
+  geom_errorbar(aes(ymin = r_squared - se, ymax = r_squared + se),  position = position_dodge(width = 0.8), width = 0.2) +
+  labs(x = "Species", y = "R-squared") + theme_minimal() + theme_classic() + coord_flip() +
+  theme(axis.text.x = element_text(hjust = 1)) + theme(aspect.ratio = 1) + scale_color_brewer(palette = "Set1") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10)) + theme(legend.position = "none")
+R_squared
+
+```
+
+```{r}
+#% Germinated
+figure_3 <- ggplot(final, aes(mean_temp, percent_germinated, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE) + 
+  labs(x = "Mean Temperature (°C)", y = "Percent Germination", color = "Species") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10), legend.position = "none") + theme(aspect.ratio = 0.7) +  xlim(22,34) + scale_x_continuous(breaks = seq(22, 34, by = 2)) + expand_limits(x = c(22, 34))  # Set integer breaks on x-axis
+figure_3
+
+#% Established
+
+figure_2 <- ggplot(final, aes(mean_temp, percent_established, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE) + 
+  labs(x = "Mean Temperature (°C)", y = "Percent Establishment", color = "Species") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10), legend.position = "none") + theme(aspect.ratio = 0.7) + xlim(22,34) + scale_x_continuous(breaks = seq(22, 34, by = 2)) + expand_limits(x = c(22, 34)) # Set integer breaks on x-axis
+figure_2
+
+### Average Biomass
+figure_1 <- ggplot(final, aes(mean_temp, average_biomass, color = species),show.legend=FALSE) +
+  geom_point() +
+  facet_wrap(~species, scales = "free") +
+  scale_color_brewer(palette = "Set1") + theme_classic() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE) + 
+  labs(x = "Mean Temperature (°C)", y = "Mean Biomass per Seedling (g)", color = "Species") + theme(text = element_text(size = 12), panel.border = element_rect(color = "black", fill = NA, size = 1.5), axis.text = element_text(size = 10), legend.position = "none") + theme(aspect.ratio = 0.7) + xlim(22,34) + scale_x_continuous(breaks = seq(22, 34, by = 2)) + expand_limits(x = c(22, 34)) # Set integer breaks on x-axis
+figure_1
+```
+```{r}
+library(glmmTMB)
+temp <- glmmTMB(mean_temp ~ temp*species, data = final, family = "gaussian") ### Use Temp df b/c it has all raw temperature data
+summary(temp)
+temp_reduced <- glmmTMB(mean_temp ~ temp, data = final, family = "gaussian")
+summary(temp_reduced)
+lrt_result <- anova(temp, temp_reduced, test = "Chisq")
+summary(lrt_result)
+chisq <- lrt_result$Chisq[2]
+chisq
+```
+
+```{r}
+#write.csv(final, "Chapt_2_Final.csv")
+```
+
+```{r}
+# Set your Google Maps API key
+# Read data
+map <- read.csv("observations_joined.csv")
+
+# Group data by species and find the minimum and maximum latitude and longitude for each species
+bounding_boxes <- map %>%
+  group_by(species) %>%
+  summarize(min_lat = min(lat),
+            max_lat = max(lat),
+            min_lon = min(lon),
+            max_lon = max(lon))
+
+# Calculate overall bounding box that encompasses all species
+overall_bounding_box <- c(left = min(bounding_boxes$min_lon),
+                          bottom = min(bounding_boxes$min_lat),
+                          right = max(bounding_boxes$max_lon),
+                          top = max(bounding_boxes$max_lat))
+
+# Get map
+my_map <- get_map(location = overall_bounding_box, maptype = "terrain", source = "google", zoom = 7)
+map_1 <- ggmap(my_map)
+
+# Plot points
+map_1 <- map_1 +
+  geom_point(data = map, aes(x = lon, y = lat, color = species), size = 2, shape = 16, alpha = 0.6) +
+  scale_size(guide = "none") +
+  scale_color_brewer(palette = "Set1") +
+  labs(x = "longitude", y = "latitude", color = "Species") +
+  theme(legend.position = "right")
+
+map_1
+
+
+library(ggplot2)
+library(ggmap)
+library(sf)
+
+
+# Assuming your data frame is called 'data' and has columns 'species', 'lat', and 'long'
+
+# Convert data to sf object
+data_sf <- st_as_sf(map, coords = c("lon", "lat"))
+
+# Filter data by species
+species1 <- data_sf[data_sf$species == "Bromus rubens", ]
+species2 <- data_sf[data_sf$species == "Phacelia tanacetifolia", ]
+species3 <- data_sf[data_sf$species == "Salvia columbariae", ]
+species4 <- data_sf[data_sf$species == "Layia platyglossa", ]
+
+# Plot map
+bounding_box <- c(left = min(map$lon), bottom = min(map$lat), right = max(map$lon), top = max(map$lat))
+my_map <- get_map(location = bounding_box, maptype = "terrain", source = "google", zoom = 7)
+
+# Plot polygons for each species
+map_new <- ggmap(my_map) +
+  geom_sf(data = species1, fill = "red", color = NA, alpha = 0.5) +
+  geom_sf(data = species2, fill = "blue", color = NA, alpha = 0.5) +
+  geom_sf(data = species3, fill = "green", color = NA, alpha = 0.5) +
+  geom_sf(data = species4, fill = "orange", color = NA, alpha = 0.5) +
+  labs(x = "Longitude", y = "Latitude") +
+  theme(legend.position = "right")
+
+map_new
+
+
+library(ggplot2)
+library(ggmap)
+library(sf)
+
+
+# Convert data to sf object
+data_sf <- st_as_sf(map, coords = c("lon", "lat"))
+
+# Plot map
+bounding_box <- c(left = min(map$lon), bottom = min(map$lat), right = max(map$lon), top = max(map$lat))
+my_map <- get_map(location = bounding_box, maptype = "terrain", source = "google", zoom = 7)
+
+# Plot polygons for each species
+map_new <- ggmap(my_map) +
+  geom_sf(data = data_sf, aes(fill = species), color = NA, alpha = 0.5) +
+  scale_fill_manual(values = c("red", "blue", "green", "orange")) +
+  labs(x = "Longitude", y = "Latitude", fill = "Species") +
+  theme(legend.position = "right")
+
+map_new
+
+```
+```{r}
+
+```
+```{r}
+library(ggplot2)
+library(ggmap)
+library(dplyr)
+
+
+# Filter data for the species "Bromus rubens"
+bromus_data <- filter(data, species == "Bromus rubens")
+
+# Get the bounding box for the map
+bounding_box <- c(left = min(bromus_data$lon), bottom = min(bromus_data$lat),
+                  right = max(bromus_data$lon), top = max(bromus_data$lat))
+
+# Get the map
+my_map <- get_map(location = bounding_box, maptype = "terrain", source = "google", zoom = 7)
+
+# Plot the map
+map_plot_brome <- ggmap(my_map)
+
+# Plot the convex hull polygon for "Bromus rubens"
+hull <- chull(bromus_data$lon, bromus_data$lat)
+polygon_data <- data.frame(lon = bromus_data$lon[hull], lat = bromus_data$lat[hull])
+map_plot_brome <- map_plot_brome +
+  geom_polygon(data = polygon_data, aes(x = lon, y = lat), fill = "#E41A1C", color = "#E41A1C", alpha = 0.3) +
+  labs(title = "Bromus rubens", x = "longitude", y = "latitude")  # Add title for the map
+
+print(map_plot_brome)
+
+```
+```{r}
+library(ggplot2)
+library(ggmap)
+library(dplyr)
+
+
+# Filter data for the species "Layia platyglossa"
+layia_data <- filter(data, species == "Layia platyglossa")
+
+# Get the bounding box for the map
+bounding_box <- c(left = min(layia_data$lon), bottom = min(layia_data$lat),
+                  right = max(layia_data$lon), top = max(layia_data$lat))
+
+# Get the map
+my_map <- get_map(location = bounding_box, maptype = "terrain", source = "google", zoom = 7)
+
+# Plot the map
+map_plot_layia <- ggmap(my_map)
+
+# Plot the convex hull polygon for "Layia platyglossa"
+hull <- chull(layia_data$lon, layia_data$lat)
+polygon_data_layia <- data.frame(lon = layia_data$lon[hull], lat = layia_data$lat[hull])
+map_plot_layia <- map_plot_layia +
+  geom_polygon(data = polygon_data_layia, aes(x = lon, y = lat), fill = "#377EB8", color = "#377EB8", alpha = 0.3) +
+  labs(title = "Layia platyglossa", x = "longitude", y = "latitude")  # Add title for the map
+
+print(map_plot_layia)
+```
+```{r}
+library(ggplot2)
+library(ggmap)
+library(dplyr)
+
+
+# Filter data for the species "Salvia columbariae"
+salvia_data <- filter(data, species == "Salvia columbariae")
+
+# Get the bounding box for the map
+bounding_box <- c(left = min(salvia_data$lon), bottom = min(salvia_data$lat),
+                  right = max(salvia_data$lon), top = max(salvia_data$lat))
+
+# Get the map
+my_map <- get_map(location = bounding_box, maptype = "terrain", source = "google", zoom = 7)
+
+# Plot the map
+map_plot_salvia <- ggmap(my_map)
+
+# Plot the convex hull polygon for "Salvia columbariae"
+hull <- chull(salvia_data$lon, salvia_data$lat)
+polygon_data_salvia <- data.frame(lon = salvia_data$lon[hull], lat = salvia_data$lat[hull])
+map_plot_salvia <- map_plot_salvia +
+  geom_polygon(data = polygon_data_salvia, aes(x = lon, y = lat), fill = "#984EA3", color = "#984EA3", alpha = 0.3) +
+  labs(title = "Salvia columbariae", x = "longitude", y = "latitude")  # Add title for the map
+
+print(map_plot_salvia)
+
+```
+```{r}
+library(ggplot2)
+library(ggmap)
+library(dplyr)
+
+
+# Filter data for the species "Phacelia tanacetifolia"
+phacelia_data <- filter(data, species == "Phacelia tanacetifolia")
+
+# Get the bounding box for the map
+bounding_box <- c(left = min(phacelia_data$lon), bottom = min(phacelia_data$lat),
+                  right = max(phacelia_data$lon), top = max(phacelia_data$lat))
+
+# Get the map
+my_map <- get_map(location = bounding_box, maptype = "terrain", source = "google", zoom = 7)
+
+# Plot the map
+map_plot_phacelia <- ggmap(my_map)
+
+# Plot the convex hull polygon for "Phacelia tanacetifolia"
+hull <- chull(phacelia_data$lon, phacelia_data$lat)
+polygon_data <- data.frame(lon = phacelia_data$lon[hull], lat = phacelia_data$lat[hull])
+map_plot_phacelia <- map_plot_phacelia +
+  geom_polygon(data = polygon_data, aes(x = lon, y = lat), fill = "#4DAF4A", color = "#4DAF4A", alpha = 0.3) +
+  labs(title = "Phacelia tanacetifolia", x = "longitude", y = "latitude")  # Add title for the map
+
+print(map_plot_phacelia)
+
+```
+```{r}
+# Combine the maps for each species
+overlay_map <- map_plot_brome + map_plot_layia + map_plot_salvia + map_plot_phacelia
+
+# Print the overlay map
+print(overlay_map)
+
+```
+
+```{r}
+hull <- chull(salvia_data$lon, salvia_data$lat)
+polygon_data_salvia <- data.frame(lon = salvia_data$lon[hull], lat = salvia_data$lat[hull])
+map_plot_salvia <- map_plot_salvia +
+  geom_polygon(data = polygon_data_salvia, aes(x = lon, y = lat), fill = "#984EA3", color = "#984EA3", alpha = 0.3) +
+  labs(title = "Salvia columbariae")  # Add title for the map
+
+print(map_plot_salvia)
+
+hull <- chull(phacelia_data$lon, phacelia_data$lat)
+polygon_data_phacelia <- data.frame(lon = phacelia_data$lon[hull], lat = phacelia_data$lat[hull])
+map_plot_phacelia <- map_plot_phacelia +
+  geom_polygon(data = polygon_data_phacelia, aes(x = lon, y = lat), fill = "#4DAF4A", color = "#4DAF4A", alpha = 0.3) +
+  labs(title = "Phacelia tanacetifolia")  # Add title for the map
+map_plot_phacelia
+
+
+test_map <- ggmap(my_map)
+test_map <- test_map +
+  geom_polygon(data = polygon_data_phacelia, aes(x = lon, y = lat), fill = "#4DAF4A", color = "#4DAF4A", alpha = 0.2) +
+  geom_polygon(data = polygon_data_salvia, aes(x = lon, y = lat), fill = "#984EA3", color = "#984EA3", alpha = 0.2) + 
+  geom_polygon(data = polygon_data_layia, aes(x = lon, y = lat), fill = "#377EB8", color = "#377EB8", alpha = 0.2) +
+  geom_polygon(data = polygon_data, aes(x = lon, y = lat), fill = "#E41A1C", color = "#E41A1C", alpha = 0.2)
+
+print(test_map)
+  
+```
+
 
